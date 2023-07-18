@@ -1,0 +1,24 @@
+<html>
+    <head>
+        <title>NEATJS Demo</title>
+    </head>
+    <body>
+        <h1>NEATJS DEMO</h1>
+        <h3>Generation: <span id="gen"></span></h3>
+        <h3>Max Fitness: <span id="fit"></span>/8</h3>
+        <p>This is a demo of NEAT solving the XOR problem</p>
+        <button onclick="reset()">Reset</button>
+        <div id="container" style="display: flex">
+            <!-- <div id="gameDisplay" style="flex: 1; width: 50%"></div> -->
+            <div id="neuralNets" style="flex: 1; width: 100%"></div>
+        </div>
+
+        <script src="src/helper.js"></script>
+        <script src="src/node.js"></script>
+        <script src="src/connection.js"></script>
+        <script src="src/NeuralNetwork.js"></script>
+        <script src="src/NEAT.js"></script>
+        <script src="src/drawer.js"></script>
+        <script src="demo/xor.js"></script>
+    </body>
+</html>
