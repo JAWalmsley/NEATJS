@@ -1,10 +1,10 @@
 "use strict";
 const PIPE_SPACING = 500;
 let canvas = document.getElementById('game');
-let bird = new Bird(canvas);
+let birds = [];
 let pipes = [];
 function reset() {
-    bird = new Bird(canvas);
+    birds.push(new Bird(canvas), new AIBird(canvas));
     pipes = [];
     pipes.push(new Pipe(canvas, canvas.width));
 }
@@ -12,8 +12,27 @@ function run() {
     let ctx = canvas.getContext('2d');
     // Clear canvas
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    bird.update();
+    updateBirds();
     updatePipes();
+}
+function updateBirds() {
+    for (let b of birds) {
+        b.update();
+        for (let p of pipes) {
+            if (b.isTouching(p)) {
+                b.die();
+                birds.splice(birds.indexOf(b), 1);
+            }
+        }
+    }
+    if (birds.length == 0) {
+        reset();
+    }
+}
+function scoreUp() {
+    for (let b of birds) {
+        b.score++;
+    }
 }
 function updatePipes() {
     let maxPipeX = 0;
@@ -27,9 +46,10 @@ function updatePipes() {
         if (p.x < -100) {
             pipes.splice(pipes.indexOf(p), 1);
         }
-        if (p.isTouching(bird)) {
-            console.log("Bird Died!");
-            reset();
+        if (!p.passed && p.x < birds[0].x) {
+            p.passed = true;
+            scoreUp();
+            console.log(birds[0].score);
         }
     }
     // Add new pipes if the last one is far enough away
@@ -37,5 +57,8 @@ function updatePipes() {
         pipes.push(new Pipe(canvas));
     }
 }
+canvas.addEventListener('click', () => {
+    birds[0].jump();
+});
 reset();
 setInterval(run, 1000 / 60);

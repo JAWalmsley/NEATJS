@@ -1,6 +1,6 @@
 "use strict";
 // Gap between top and bottom pipe
-const GAP_SIZE = 200;
+const GAP_SIZE = 250;
 // Minimum space between gap and top/bottom of the screen
 const GAP_BORDER = 200;
 // Width of the pipe
@@ -10,6 +10,7 @@ const FUN_MARGIN = 0.7;
 class Pipe {
     constructor(canvas, x = null) {
         this.x = x !== null && x !== void 0 ? x : canvas.width;
+        this.passed = false;
         this.canvas = canvas;
         let gapRange = canvas.height - GAP_SIZE - GAP_BORDER * 2;
         this.gapHeight = Math.random() * gapRange + GAP_BORDER;
@@ -29,13 +30,5 @@ class Pipe {
         ctx.rect(this.x, 0, PIPE_WIDTH, this.gapHeight);
         ctx.rect(this.x, this.gapHeight + GAP_SIZE, PIPE_WIDTH, 1000);
         ctx.fill();
-    }
-    isTouching(b) {
-        let hitRadius = b.r * FUN_MARGIN;
-        if (b.y - hitRadius < this.gapHeight || b.y + hitRadius > this.gapHeight + GAP_SIZE) {
-            if (b.x + hitRadius > this.x && b.x - hitRadius < this.x + PIPE_WIDTH) {
-                return true;
-            }
-        }
     }
 }

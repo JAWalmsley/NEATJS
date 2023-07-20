@@ -1,5 +1,5 @@
 // Gap between top and bottom pipe
-const GAP_SIZE: number = 200;
+const GAP_SIZE: number = 250;
 // Minimum space between gap and top/bottom of the screen
 const GAP_BORDER = 200;
 // Width of the pipe
@@ -9,11 +9,13 @@ const FUN_MARGIN = 0.7;
 
 class Pipe {
     x: number;
+    passed: boolean;
     canvas: HTMLCanvasElement;
     gapHeight: number;
 
     constructor(canvas: HTMLCanvasElement, x:number|null=null) {
         this.x = x??canvas.width;
+        this.passed = false;
         this.canvas = canvas;
         let gapRange = canvas.height - GAP_SIZE - GAP_BORDER*2;
         this.gapHeight = Math.random()*gapRange + GAP_BORDER;
@@ -37,12 +39,4 @@ class Pipe {
         ctx.fill();
     }
 
-    isTouching(b: Bird) {
-        let hitRadius = b.r * FUN_MARGIN;
-        if(b.y - hitRadius < this.gapHeight || b.y + hitRadius > this.gapHeight + GAP_SIZE) {
-            if(b.x + hitRadius > this.x && b.x - hitRadius < this.x + PIPE_WIDTH) {
-                return true;
-            }
-        }
-    }
 }
