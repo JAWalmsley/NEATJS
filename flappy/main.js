@@ -7,7 +7,7 @@ let aliveHTML = document.getElementById('alive');
 let speciesHTML = document.getElementById('species');
 let birds = [];
 let pipes = [];
-let NEATManager = new NEAT(500, 4, 2, ["PipeDist", "PipeHeight", "BirdY", "BirdVel"], ["Jump", "DontJump"]);
+let NEATManager = new NEAT(500, 5, 2, ["PipeDist", "PipeHeight", "BirdY", "BirdVel", "Bias"], ["Jump", "DontJump"]);
 NEATManager.createPopulation();
 let neuralCanv = document.getElementById("neural");
 let draw = new Drawer(neuralCanv.getContext('2d'));

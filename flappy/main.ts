@@ -11,7 +11,7 @@ let speciesHTML = document.getElementById('species') as HTMLSpanElement;
 
 let birds: Array<Bird> = [];
 let pipes: Array<Pipe> = [];
-let NEATManager = new NEAT(500, 4, 2, ["PipeDist", "PipeHeight", "BirdY", "BirdVel"], ["Jump", "DontJump"]);
+let NEATManager = new NEAT(500, 5, 2, ["PipeDist", "PipeHeight", "BirdY", "BirdVel", "Bias"], ["Jump", "DontJump"]);
 NEATManager.createPopulation();
 
 let neuralCanv = document.getElementById("neural") as HTMLCanvasElement;

@@ -13,7 +13,7 @@ class AIBird extends Bird {
         let pipeHeightScaled = nextPipe.gapHeight/this.canvas.height;
         let yScaled = this.y/this.canvas.height;
         let velScaled = this.velocity/10;
-        let output = this.brain.getOutput([pipeDistScaled, pipeHeightScaled, yScaled, velScaled])
+        let output = this.brain.getOutput([pipeDistScaled, pipeHeightScaled, yScaled, velScaled, 1])
 
         // Two outputs: Jump, Don't Jump
         // Having one for each case is better for training according to the paper
