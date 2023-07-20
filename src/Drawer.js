@@ -1,5 +1,6 @@
 "use strict";
 const SQ = 20;
+const SCALE = 2;
 /**
  * Functions to draw a neural network on a canvas
  */
@@ -24,15 +25,16 @@ class Drawer {
         this.ctx.strokeRect(x * SQ, y * SQ, SQ, SQ);
     }
     drawNN(nn) {
-        const START_OFFSET_X = 100;
+        const START_OFFSET_X = 150;
         const START_OFFSET_Y = 10;
-        const COLUMN_GAP = 50;
-        const ROW_GAP = 20;
+        const COLUMN_GAP = 50 * SCALE;
+        const ROW_GAP = 20 * SCALE;
         const MIN_WEIGHT_DRAW = 0;
         this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
         let layerHeights = {};
         let nodePositions = {};
         let nodes = nn.nodes.slice().sort((a, b) => a.id - b.id);
+        let outputX = 0;
         for (let i = 0; i < nodes.length; i++) {
             let size = 5;
             let node = nodes[i];
@@ -56,8 +58,11 @@ class Drawer {
             // }
             let x = START_OFFSET_X + COLUMN_GAP * xoff;
             let y = ROW_GAP * layerHeights[node.layer] + START_OFFSET_Y;
+            if (node.isOutput) {
+                outputX = x;
+            }
             nodePositions[node.id] = { x: x, y: y };
-            this.ctx.arc(x, y, size, 0, 2 * Math.PI);
+            this.ctx.arc(x * SCALE, y * SCALE, size * SCALE, 0, 2 * Math.PI);
             this.ctx.fillStyle = Drawer.RainbowColor(node.outputValue, 1);
             this.ctx.fill();
             this.ctx.fillStyle = "black";
@@ -69,14 +74,19 @@ class Drawer {
             this.ctx.beginPath();
             this.ctx.lineWidth = 1;
             this.ctx.strokeStyle = Drawer.RainbowColor(conn.weight, 1);
-            this.ctx.moveTo(nodePositions[conn.fromNode.id].x, nodePositions[conn.fromNode.id].y);
-            this.ctx.lineTo(nodePositions[conn.toNode.id].x, nodePositions[conn.toNode.id].y);
+            this.ctx.moveTo(nodePositions[conn.fromNode.id].x * SCALE, nodePositions[conn.fromNode.id].y * SCALE);
+            this.ctx.lineTo(nodePositions[conn.toNode.id].x * SCALE, nodePositions[conn.toNode.id].y * SCALE);
             this.ctx.stroke();
         }
         for (let i = 0; i < nn.inputLabels.length; i++) {
             this.ctx.textAlign = "right";
-            this.ctx.font = "30px";
-            this.ctx.fillText(nn.inputLabels[i], START_OFFSET_X - 10, ROW_GAP * (i + 1) + START_OFFSET_Y);
+            this.ctx.font = "bold 50px sans-serif";
+            this.ctx.fillText(nn.inputLabels[i], (START_OFFSET_X - 10) * SCALE, (ROW_GAP * (i + 1) + START_OFFSET_Y) * SCALE);
+        }
+        for (let i = 0; i < nn.outputLabels.length; i++) {
+            this.ctx.textAlign = "left";
+            this.ctx.font = "bold 50px sans-serif";
+            this.ctx.fillText(nn.outputLabels[i], (outputX + 10) * SCALE, (ROW_GAP * (i + 1) + START_OFFSET_Y) * SCALE);
         }
     }
     drawGrid(data, dim, smallData = [], smallDim = 0) {

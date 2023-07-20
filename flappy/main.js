@@ -90,5 +90,9 @@ function setTimescale(tsc) {
 canvas.addEventListener('click', () => {
     birds[0].jump();
 });
+let slowButton = document.getElementById("slowdown");
+let fastButton = document.getElementById("speedup");
+slowButton.addEventListener('click', () => { setTimescale(60); });
+fastButton.addEventListener('click', () => { setTimescale(1000); });
 reset();
-var int = setInterval(run, 1000 / 120);
+var int = setInterval(run, 1000 / 1000);

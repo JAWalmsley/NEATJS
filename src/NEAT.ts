@@ -48,7 +48,7 @@ class NEAT {
     }
 
     nextGeneration() {
-        this.speciate(3);
+        this.speciate(0.3);
         let totalPopulationFitness = 0;
         this.species.map(
             (species) => (totalPopulationFitness += species.averageFitness)
@@ -97,7 +97,7 @@ class NEAT {
                 newBrain.applyMutations(WEIGHT, NEWCONN, NEWNODE);
                 nextPop.push({ brain: newBrain, fitness: 0 });
             }
-            // species.representative = species.members[Math.floor(Math.random() * species.members.length)].brain;
+            species.representative = species.members[Math.floor(Math.random() * species.members.length)].brain;
             this.agents.push(...nextPop);
             species.members = nextPop;
         }
@@ -105,10 +105,11 @@ class NEAT {
 
     speciate(threshold: number) {
         // Clear species members
-        for (let species of this.species) {
-            species.members = [];
-            species.averageFitness = 0;
-        }
+        // for (let species of this.species) {
+        //     species.members = [];
+        //     species.averageFitness = 0;
+        // }
+        this.species = [];
         this.agents.forEach((agent) => {
             let foundSpecies = false;
             for (let species of this.species) {
