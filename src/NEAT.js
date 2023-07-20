@@ -1,6 +1,6 @@
 "use strict";
 const ELITISM = 0.1;
-const WEIGHT = 0.8;
+const WEIGHT = 0.9;
 const NEWCONN = 0.05;
 const NEWNODE = 0.03;
 class NEAT {
