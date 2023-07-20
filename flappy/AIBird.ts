@@ -1,8 +1,8 @@
 class AIBird extends Bird {
-    brain;
+    brain: NeuralNetwork;
     constructor(canvas: HTMLCanvasElement) {
         super(canvas);
-        this.NN = new NeuralNetwork(4, 6, 1);
+        this.brain = new NeuralNetwork(4, 2);
     }
     update() {
         super.update();
