@@ -13,6 +13,13 @@ function gaussianRandom(mean = 0, stdev = 0.5) {
 
 interface Agent {
     fitness: number;
+    brain: NeuralNetwork;
+}
+
+interface Species {
+    representative: NeuralNetwork;
+    members: Array<Agent>;
+    averageFitness: number;
 }
 
 function weighted_random(options: Array<Agent>) {

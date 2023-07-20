@@ -1,10 +1,21 @@
-"use strict";
 const ELITISM = 0.2;
 const WEIGHT = 0.8;
 const NEWCONN = 0.05;
 const NEWNODE = 0.03;
+
 class NEAT {
-    constructor(population, numInputs, numOutputs, inputLabels, outputLabels) {
+    population: number;
+    innovation: number;
+    numInputs: number;
+    numOutputs: number;
+    inputLabels: Array<string>;
+    outputLabels: Array<string>;
+    agents: Array<Agent>;
+    genes: Array<Connection>;
+    species: Array<Species>;
+
+
+    constructor(population: number, numInputs: number, numOutputs: number, inputLabels: Array<string>, outputLabels: Array<string>) {
         this.population = population;
         this.innovation = 0;
         this.numInputs = numInputs;
@@ -15,6 +26,7 @@ class NEAT {
         this.genes = [];
         this.species = [];
     }
+
     createPopulation() {
         for (let i = 0; i < this.population; i++) {
             let network = new NeuralNetwork(this.numInputs, this.numOutputs, this.inputLabels, this.outputLabels);
@@ -24,6 +36,7 @@ class NEAT {
             this.agents.push({ brain: network, fitness: 0 });
         }
     }
+
     nextGeneration() {
         this.speciate(0.1);
         let totalPopulationFitness = 0;
@@ -44,7 +57,7 @@ class NEAT {
             for (let i = 0; i < Math.ceil(nextGenSize * (1 - ELITISM)); i++) {
                 let rand1 = this.naturalSelection(species.members);
                 let rand2 = this.naturalSelection(species.members);
-                if (!rand1 || !rand2) {
+                if(!rand1 || !rand2) {
                     console.error("Natural selection failed, rand1/rand2 are null", rand1, rand2);
                     return;
                 }
@@ -57,7 +70,8 @@ class NEAT {
             species.members = nextPop;
         }
     }
-    speciate(threshold) {
+
+    speciate(threshold: number) {
         // Clear species members
         for (let species of this.species) {
             species.members = [];
@@ -78,11 +92,13 @@ class NEAT {
             if (!foundSpecies) {
                 this.species.push({ representative: agent.brain, members: [agent], averageFitness: agent.fitness });
             }
-        });
+        })
+
         // Remove any species with no members
         this.species = this.species.filter((species) => species.members.length > 0);
     }
-    naturalSelection(agentList) {
+
+    naturalSelection(agentList: Array<Agent>) {
         let totalFitness = 0;
         for (let agent of agentList) {
             totalFitness += agent.fitness;
@@ -94,6 +110,6 @@ class NEAT {
                 return agent;
             }
         }
-        console.error("didnt select anything!!!", agentList, totalFitness, rand);
+        console.error("didnt select anything!!!", agentList, totalFitness, rand)
     }
 }

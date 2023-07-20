@@ -40,6 +40,7 @@ class NeuralNetwork {
         this.refreshNodes();
         // Add inputs as the only input to first layer nodes
         for (let i = 0; i < this.numInputs; i++) {
+            console.log("happening at input", inputData);
             this.nodes[i].addInput(inputData[i]);
         }
         let output = [];

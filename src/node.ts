@@ -47,6 +47,7 @@ class NeuralNode {
             this.outputValue = Math.tanh(ACTIVATION_SLOPE * sumArr(this.inputValues));
         }
         for(let conn of this.outboundConnections) {
+            console.log("Happening at outbound")
             conn.toNode.addInput(this.outputValue * conn.weight);
         }
     }

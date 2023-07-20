@@ -3,17 +3,26 @@ const PIPE_SPACING = 500;
 let canvas = document.getElementById('game');
 let birds = [];
 let pipes = [];
+let NEATManager = new NEAT(100, 4, 2, ["PipeDist", "PipeHeight", "BirdY", "BirdVel"], ["Jump", "DontJump"]);
+NEATManager.createPopulation();
 function reset() {
-    birds.push(new Bird(canvas), new AIBird(canvas));
+    birds = [];
     pipes = [];
+    for (let agent of NEATManager.agents) {
+        birds.push(new AIBird(canvas, agent));
+    }
     pipes.push(new Pipe(canvas, canvas.width));
 }
 function run() {
     let ctx = canvas.getContext('2d');
     // Clear canvas
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    updateBirds();
     updatePipes();
+    updateBirds();
+    if (birds.length == 0) {
+        NEATManager.nextGeneration();
+        reset();
+    }
 }
 function updateBirds() {
     for (let b of birds) {
@@ -21,12 +30,14 @@ function updateBirds() {
         for (let p of pipes) {
             if (b.isTouching(p)) {
                 b.die();
-                birds.splice(birds.indexOf(b), 1);
             }
         }
-    }
-    if (birds.length == 0) {
-        reset();
+        if (b instanceof AIBird) {
+            b.makeAIMove(pipes);
+        }
+        if (b.dead) {
+            birds.splice(birds.indexOf(b), 1);
+        }
     }
 }
 function scoreUp() {
