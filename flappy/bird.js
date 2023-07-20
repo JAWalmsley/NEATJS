@@ -1,7 +1,11 @@
 "use strict";
+const GRAVITY = -0.5;
+const JUMP_VELOCITY = 10;
 class Bird {
     constructor(canvas) {
+        this.x = 100;
         this.y = canvas.height / 2;
+        this.r = 20;
         this.velocity = 0;
         this.canvas = canvas;
         this.dead = false;
@@ -12,14 +16,17 @@ class Bird {
             return;
         }
         this.y -= this.velocity;
-        this.velocity -= 0.4;
+        this.velocity += GRAVITY;
         if (this.y >= this.canvas.height) {
             console.log("END");
-            this.dead = true;
+            this.die();
         }
     }
+    die() {
+        this.dead = true;
+    }
     jump() {
-        this.velocity = 10;
+        this.velocity = JUMP_VELOCITY;
     }
     draw() {
         const ctx = this.canvas.getContext('2d');
@@ -29,7 +36,7 @@ class Bird {
         }
         ctx.beginPath();
         ctx.fillStyle = 'red';
-        ctx.arc(100, this.y, 20, 0, 2 * Math.PI);
+        ctx.arc(this.x, this.y, this.r, 0, 2 * Math.PI);
         ctx.fill();
     }
 }
