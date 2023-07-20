@@ -1,9 +1,18 @@
 "use strict";
-const ELITISM = 0.2;
+const ELITISM = 0.1;
 const WEIGHT = 0.8;
 const NEWCONN = 0.05;
 const NEWNODE = 0.03;
 class NEAT {
+    population;
+    innovation;
+    numInputs;
+    numOutputs;
+    inputLabels;
+    outputLabels;
+    agents;
+    genes;
+    species;
     constructor(population, numInputs, numOutputs, inputLabels, outputLabels) {
         this.population = population;
         this.innovation = 0;
@@ -25,17 +34,25 @@ class NEAT {
         }
     }
     nextGeneration() {
-        this.speciate(0.1);
+        this.speciate(3);
         let totalPopulationFitness = 0;
-        this.species.map((species) => totalPopulationFitness += species.averageFitness);
+        this.species.map((species) => (totalPopulationFitness += species.averageFitness));
         this.agents = [];
         for (let species of this.species) {
             // Size of next gen is proportional to the fitness of this species (better ones get more offspring)
-            let nextGenSize = Math.ceil(species.averageFitness / totalPopulationFitness * this.population);
+            let nextGenSize;
+            if (totalPopulationFitness == 0) {
+                nextGenSize = species.members.length;
+            }
+            else {
+                nextGenSize = Math.ceil((species.averageFitness / totalPopulationFitness) *
+                    this.population);
+            }
             let nextPop = [];
             species.members.sort((a, b) => b.fitness - a.fitness);
             // Elitism: Add top 20% of agents to next generation
-            for (let i = 0; i < Math.min(Math.floor(nextGenSize * ELITISM), species.members.length); i++) {
+            for (let i = 0; i <
+                Math.min(Math.floor(nextGenSize * ELITISM), species.members.length); i++) {
                 let newBrain = species.members[i].brain.copy();
                 // newBrain.applyMutations(WEIGHT, NEWCONN, NEWNODE);
                 nextPop.push({ brain: newBrain, fitness: 0 });
@@ -45,7 +62,7 @@ class NEAT {
                 let rand1 = this.naturalSelection(species.members);
                 let rand2 = this.naturalSelection(species.members);
                 if (!rand1 || !rand2) {
-                    console.error("Natural selection failed, rand1/rand2 are null", rand1, rand2);
+                    console.error('Natural selection failed, rand1/rand2 are null', rand1, rand2);
                     return;
                 }
                 let newBrain = rand1.brain.crossover(rand2.brain);
@@ -66,17 +83,25 @@ class NEAT {
         this.agents.forEach((agent) => {
             let foundSpecies = false;
             for (let species of this.species) {
-                if (agent.brain.geneticDistance(species.representative) < threshold) {
+                if (agent.brain.geneticDistance(species.representative) <
+                    threshold) {
                     species.members.push(agent);
                     // Formula for adding averages
                     // https://math.stackexchange.com/questions/22348/how-to-add-and-subtract-values-from-an-average
-                    species.averageFitness = species.averageFitness + (agent.fitness - species.averageFitness) / species.members.length;
+                    species.averageFitness =
+                        species.averageFitness +
+                            (agent.fitness - species.averageFitness) /
+                                species.members.length;
                     foundSpecies = true;
                     break;
                 }
             }
             if (!foundSpecies) {
-                this.species.push({ representative: agent.brain, members: [agent], averageFitness: agent.fitness });
+                this.species.push({
+                    representative: agent.brain,
+                    members: [agent],
+                    averageFitness: agent.fitness,
+                });
             }
         });
         // Remove any species with no members
@@ -94,6 +119,6 @@ class NEAT {
                 return agent;
             }
         }
-        console.error("didnt select anything!!!", agentList, totalFitness, rand);
+        console.error('didnt select anything!!!', agentList, totalFitness, rand);
     }
 }

@@ -8,8 +8,12 @@ const PIPE_WIDTH = 50;
 // How much smaller the hitbox is than the actual player's radius (makes it feel more forgiving)
 const FUN_MARGIN = 0.7;
 class Pipe {
+    x;
+    passed;
+    canvas;
+    gapHeight;
     constructor(canvas, x = null) {
-        this.x = x !== null && x !== void 0 ? x : canvas.width;
+        this.x = x ?? canvas.width;
         this.passed = false;
         this.canvas = canvas;
         let gapRange = canvas.height - GAP_SIZE - GAP_BORDER * 2;

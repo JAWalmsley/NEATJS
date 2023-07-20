@@ -4,10 +4,21 @@ let canvas: HTMLCanvasElement = document.getElementById(
     'game'
 ) as HTMLCanvasElement;
 
+let genHTML = document.getElementById('gen') as HTMLSpanElement;
+let scoreHTML = document.getElementById('score') as HTMLSpanElement;
+let aliveHTML = document.getElementById('alive') as HTMLSpanElement;
+let speciesHTML = document.getElementById('species') as HTMLSpanElement;
+
 let birds: Array<Bird> = [];
 let pipes: Array<Pipe> = [];
 let NEATManager = new NEAT(100, 4, 2, ["PipeDist", "PipeHeight", "BirdY", "BirdVel"], ["Jump", "DontJump"]);
 NEATManager.createPopulation();
+
+let neuralCanv = document.getElementById("neural") as HTMLCanvasElement;
+
+let draw = new Drawer(neuralCanv.getContext('2d') as CanvasRenderingContext2D);
+
+let generation = 0;
 
 function reset() {
     birds = [];
@@ -28,10 +39,20 @@ function run() {
     
     updatePipes();
     updateBirds();
+    aliveHTML.innerHTML = birds.length.toString();
     if(birds.length == 0) {
+        generation++;
+        genHTML.innerHTML = generation.toString();
+        speciesHTML.innerHTML = NEATManager.species.length.toString();
+        console.log("Generation", generation, "Species: ", NEATManager.species.length, "Population: ", NEATManager.agents.length);
+        
         NEATManager.nextGeneration();
         reset();
     }
+    if(birds[0] instanceof AIBird) {
+        draw.drawNN(birds[0].brain);
+    }
+    scoreHTML.innerHTML = birds[0].score.toString();
 }
 
 function updateBirds() {
@@ -72,7 +93,6 @@ function updatePipes() {
         if (!p.passed && p.x < birds[0].x) {
             p.passed = true;
             scoreUp();
-            console.log(birds[0].score);
         }
     }
     // Add new pipes if the last one is far enough away
@@ -81,9 +101,14 @@ function updatePipes() {
     }
 }
 
+function setTimescale(tsc: number) {
+    clearInterval(int);
+    int = setInterval(run, 1000 / tsc);
+}
+
 canvas.addEventListener('click', () => {
     birds[0].jump();
 });
 
 reset();
-setInterval(run, 1000 / 60);
+var int = setInterval(run, 1000 / 120);

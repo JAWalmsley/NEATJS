@@ -1,5 +1,8 @@
 "use strict";
 class Connection {
+    fromNode;
+    toNode;
+    weight;
     constructor(fromNode, toNode, weight) {
         this.fromNode = fromNode;
         this.toNode = toNode;

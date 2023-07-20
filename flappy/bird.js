@@ -2,6 +2,13 @@
 const GRAVITY = -0.5;
 const JUMP_VELOCITY = 10;
 class Bird {
+    x;
+    y;
+    r;
+    score;
+    velocity;
+    canvas;
+    dead;
     constructor(canvas) {
         this.x = 100;
         this.y = canvas.height / 2;

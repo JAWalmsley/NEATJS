@@ -55,7 +55,6 @@ class NeuralNetwork {
 
         // Add inputs as the only input to first layer nodes
         for (let i = 0; i < this.numInputs; i++) {
-            console.log("happening at input", inputData)
             this.nodes[i].addInput(inputData[i]);
         }
 
@@ -105,7 +104,7 @@ class NeuralNetwork {
         let E = 0;
         let D = 0;
         let N = Math.max(this.connections.length, other.connections.length);
-        // N = 1;
+        N = 1;
         let weightDiffs = [];
 
         for (let conn of this.connections) {
@@ -162,6 +161,7 @@ class NeuralNetwork {
                     fromNode = node2;
                     toNode = node1;
                 }
+
                 let newConn = new Connection(fromNode, toNode, Math.random() * 2 - 1);
                 this.connections.push(newConn);
             }

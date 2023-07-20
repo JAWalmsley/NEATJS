@@ -1,6 +1,12 @@
 "use strict";
 const ACTIVATION_SLOPE = 3;
 class NeuralNode {
+    layer;
+    isOutput;
+    id;
+    outboundConnections;
+    inputValues;
+    outputValue;
     /**
      *
      * @param {*} innovation
@@ -38,7 +44,7 @@ class NeuralNode {
             this.outputValue = Math.tanh(ACTIVATION_SLOPE * sumArr(this.inputValues));
         }
         for (let conn of this.outboundConnections) {
-            console.log("Happening at outbound");
+            // console.log("Happening at outbound")
             conn.toNode.addInput(this.outputValue * conn.weight);
         }
     }

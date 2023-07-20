@@ -1,9 +1,10 @@
 "use strict";
 class AIBird extends Bird {
+    brain;
+    agent;
     constructor(canvas, agent) {
         super(canvas);
         this.brain = agent.brain;
-        this.brain.initialize();
         this.agent = agent;
     }
     makeAIMove(pipes) {
@@ -19,6 +20,10 @@ class AIBird extends Bird {
             this.jump();
         }
     }
+    update() {
+        super.update();
+        this.score += 1;
+    }
     die() {
         super.die();
         this.agent.fitness = this.score;
@@ -26,7 +31,7 @@ class AIBird extends Bird {
     getNextPipe(pipes) {
         let nextPipe = pipes[0];
         for (let p of pipes) {
-            if (p.x < this.x) {
+            if (p.x < this.x - 20) {
                 continue;
             }
             if (p.x - this.x < nextPipe.x - this.x) {

@@ -1,10 +1,17 @@
 "use strict";
 const PIPE_SPACING = 500;
 let canvas = document.getElementById('game');
+let genHTML = document.getElementById('gen');
+let scoreHTML = document.getElementById('score');
+let aliveHTML = document.getElementById('alive');
+let speciesHTML = document.getElementById('species');
 let birds = [];
 let pipes = [];
 let NEATManager = new NEAT(100, 4, 2, ["PipeDist", "PipeHeight", "BirdY", "BirdVel"], ["Jump", "DontJump"]);
 NEATManager.createPopulation();
+let neuralCanv = document.getElementById("neural");
+let draw = new Drawer(neuralCanv.getContext('2d'));
+let generation = 0;
 function reset() {
     birds = [];
     pipes = [];
@@ -19,10 +26,19 @@ function run() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     updatePipes();
     updateBirds();
+    aliveHTML.innerHTML = birds.length.toString();
     if (birds.length == 0) {
+        generation++;
+        genHTML.innerHTML = generation.toString();
+        speciesHTML.innerHTML = NEATManager.species.length.toString();
+        console.log("Generation", generation, "Species: ", NEATManager.species.length, "Population: ", NEATManager.agents.length);
         NEATManager.nextGeneration();
         reset();
     }
+    if (birds[0] instanceof AIBird) {
+        draw.drawNN(birds[0].brain);
+    }
+    scoreHTML.innerHTML = birds[0].score.toString();
 }
 function updateBirds() {
     for (let b of birds) {
@@ -60,7 +76,6 @@ function updatePipes() {
         if (!p.passed && p.x < birds[0].x) {
             p.passed = true;
             scoreUp();
-            console.log(birds[0].score);
         }
     }
     // Add new pipes if the last one is far enough away
@@ -68,8 +83,12 @@ function updatePipes() {
         pipes.push(new Pipe(canvas));
     }
 }
+function setTimescale(tsc) {
+    clearInterval(int);
+    int = setInterval(run, 1000 / tsc);
+}
 canvas.addEventListener('click', () => {
     birds[0].jump();
 });
 reset();
-setInterval(run, 1000 / 60);
+var int = setInterval(run, 1000 / 120);

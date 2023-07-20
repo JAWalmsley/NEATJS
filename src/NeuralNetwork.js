@@ -1,5 +1,12 @@
 "use strict";
 class NeuralNetwork {
+    numInputs;
+    numOutputs;
+    inputLabels;
+    outputLabels;
+    layers;
+    nodes;
+    connections;
     constructor(inputs, outputs, inputLabels = [], outputLabels = []) {
         this.numInputs = inputs;
         this.numOutputs = outputs;
@@ -40,7 +47,6 @@ class NeuralNetwork {
         this.refreshNodes();
         // Add inputs as the only input to first layer nodes
         for (let i = 0; i < this.numInputs; i++) {
-            console.log("happening at input", inputData);
             this.nodes[i].addInput(inputData[i]);
         }
         let output = [];
@@ -84,7 +90,7 @@ class NeuralNetwork {
         let E = 0;
         let D = 0;
         let N = Math.max(this.connections.length, other.connections.length);
-        // N = 1;
+        N = 1;
         let weightDiffs = [];
         for (let conn of this.connections) {
             let otherconn = other.getMatchingConnection(conn.getInnovation());
