@@ -31,7 +31,6 @@ function run() {
         generation++;
         genHTML.innerHTML = generation.toString();
         speciesHTML.innerHTML = NEATManager.species.length.toString();
-        console.log("Generation", generation, "Species: ", NEATManager.species.length, "Population: ", NEATManager.agents.length);
         NEATManager.nextGeneration();
         reset();
     }

@@ -1,5 +1,5 @@
 "use strict";
-const ELITISM = 0.1;
+const ELITISM = 0.01;
 const WEIGHT = 0.9;
 const NEWCONN = 0.05;
 const NEWNODE = 0.03;
@@ -34,7 +34,7 @@ class NEAT {
         }
     }
     nextGeneration() {
-        this.speciate(0.3);
+        this.speciate(0.1);
         let totalPopulationFitness = 0;
         this.species.map((species) => (totalPopulationFitness += species.averageFitness));
         this.agents = [];
