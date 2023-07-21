@@ -1,34 +1,39 @@
-"use strict";
 class NeuralNetwork {
-    numInputs;
-    numOutputs;
-    inputLabels;
-    outputLabels;
-    layers;
-    nodes;
-    connections;
-    constructor(inputs, outputs, inputLabels = [], outputLabels = []) {
+    numInputs: number;
+    numOutputs: number;
+    inputLabels: Array<string>;
+    outputLabels: Array<string>;
+    layers: number;
+    nodes: Array<NeuralNode>;
+    connections: Array<Connection>;
+    
+    constructor(inputs: number, outputs: number, inputLabels: Array<string> = [], outputLabels:Array<string> = []) {
         this.numInputs = inputs;
         this.numOutputs = outputs;
         this.inputLabels = inputLabels;
         this.outputLabels = outputLabels;
         this.layers = 2;
+
         this.nodes = [];
         this.connections = [];
     }
+
     initialize() {
         for (let i = 0; i < this.numInputs; i++) {
             this.nodes.push(new NeuralNode(0, false, this.nodes.length));
         }
+
         for (let i = 0; i < this.numOutputs; i++) {
             this.nodes.push(new NeuralNode(1, true, this.nodes.length));
         }
+
         for (let i = 0; i < this.numInputs; i++) {
             for (let j = 0; j < this.numOutputs; j++) {
                 this.connections.push(new Connection(this.nodes[i], this.nodes[this.numInputs + j], Math.random() * 2 - 1));
             }
         }
     }
+
     refreshNodes() {
         for (let node of this.nodes) {
             // Clear connections and previous input values
@@ -39,16 +44,20 @@ class NeuralNetwork {
             // Add connections from this network
             conn.fromNode.outboundConnections.push(conn);
         }
+
         // Sort nodes by layer so the order is correct for outputs
         this.nodes.sort((a, b) => a.layer - b.layer);
     }
-    getOutput(input) {
+
+    getOutput(input: Array<number>) {
         let inputData = input.slice();
         this.refreshNodes();
+
         // Add inputs as the only input to first layer nodes
         for (let i = 0; i < this.numInputs; i++) {
             this.nodes[i].addInput(inputData[i]);
         }
+
         let output = [];
         for (let node of this.nodes) {
             node.calculateOutputAndSendFoward();
@@ -58,21 +67,24 @@ class NeuralNetwork {
         }
         return output;
     }
-    crossover(other) {
+
+    crossover(other: NeuralNetwork) {
         this.refreshNodes();
         let child = new NeuralNetwork(this.numInputs, this.numOutputs, this.inputLabels, this.outputLabels);
+
         for (let node of this.nodes) {
             child.nodes.push(node.copy());
         }
+
         for (let conn of this.connections) {
             let matchingConn = other.getMatchingConnection(conn.getInnovation());
             if (matchingConn == null) {
                 // Other parent doesn't have a connection between these two nodes, so just copy this connection
                 child.connections.push(conn.copy());
-            }
-            else {
+            } else {
                 // Other parent does have a connection, pick randomly which one we pass on
                 let chosenConn = Math.random() < 0.5 ? conn : matchingConn;
+
                 // Check if the child has the nodes that this connection is between
                 let fromNode = child.getMatchingNode(chosenConn.fromNode.id);
                 let toNode = child.getMatchingNode(chosenConn.toNode.id);
@@ -82,23 +94,25 @@ class NeuralNetwork {
                 }
             }
         }
+
         child.layers = this.layers;
         return child;
     }
-    geneticDistance(other) {
+
+    geneticDistance(other: NeuralNetwork) {
         let c1 = 1, c2 = 1, c3 = 0.1;
         let E = 0;
         let D = 0;
         let N = Math.max(this.connections.length, other.connections.length);
         // N = 1;
         let weightDiffs = [];
+
         for (let conn of this.connections) {
             let otherconn = other.getMatchingConnection(conn.getInnovation());
             if (!otherconn) {
                 E++;
-            }
-            else {
-                weightDiffs.push(Math.abs(otherconn.weight - conn.weight));
+            } else {
+                weightDiffs.push(Math.abs(otherconn.weight - conn.weight))
             }
         }
         for (let conn of other.connections) {
@@ -107,11 +121,13 @@ class NeuralNetwork {
                 D++;
             }
         }
+
         let W = avg(weightDiffs);
         let dist = c1 * E / N + c2 * D / N + c3 * W;
         return dist;
     }
-    applyMutations(weightChance, addChance, splitChance) {
+
+    applyMutations(weightChance: number, addChance: number, splitChance: number) {
         this.refreshNodes();
         // Mutate weights
         for (let conn of this.connections) {
@@ -124,6 +140,7 @@ class NeuralNetwork {
                 conn.setWeight(conn.weight + gaussianRandom(0, 0.1));
             }
         }
+
         // Add connection between existing nodes
         if (Math.random() < addChance) {
             if (!this.checkFullyConnected()) {
@@ -133,25 +150,29 @@ class NeuralNetwork {
                     node1 = this.nodes[Math.floor(Math.random() * this.nodes.length)];
                     node2 = this.nodes[Math.floor(Math.random() * this.nodes.length)];
                 }
+
                 let fromNode;
                 let toNode;
+
                 if (node1.layer < node2.layer) {
                     fromNode = node1;
                     toNode = node2;
-                }
-                else {
+                } else {
                     fromNode = node2;
                     toNode = node1;
                 }
+
                 let newConn = new Connection(fromNode, toNode, Math.random() * 2 - 1);
                 this.connections.push(newConn);
             }
         }
+
         // Add node between existing ones (split connection)
         if (Math.random() < splitChance) {
             let pickedConn = this.connections[Math.floor(Math.random() * this.connections.length)];
             // Disable connection that we are splitting
             this.connections.splice(this.connections.indexOf(pickedConn), 1);
+
             let newNode = new NeuralNode(pickedConn.fromNode.layer + 1, false, this.nodes.length);
             // Create a new layer between the two existing layers, shift the ones on it down
             if (pickedConn.fromNode.layer == pickedConn.toNode.layer - 1) {
@@ -161,15 +182,19 @@ class NeuralNetwork {
                     }
                 }
             }
+
             this.layers++;
+
             // Create connections to the new node [from -> 1 -> new -> oldWeight -> to] (as in the paper)
             let con1 = new Connection(pickedConn.fromNode, newNode, 1);
             let con2 = new Connection(newNode, pickedConn.toNode, pickedConn.weight);
+
             this.connections.push(con1, con2);
             this.nodes.push(newNode);
         }
     }
-    getMatchingConnection(innovation) {
+
+    getMatchingConnection(innovation: number) {
         for (let conn of this.connections) {
             if (conn.getInnovation() == innovation) {
                 return conn;
@@ -177,7 +202,8 @@ class NeuralNetwork {
         }
         return null;
     }
-    getMatchingNode(id) {
+
+    getMatchingNode(id: number) {
         for (let node of this.nodes) {
             if (node.id == id) {
                 return node;
@@ -185,9 +211,11 @@ class NeuralNetwork {
         }
         return null;
     }
+
     checkFullyConnected() {
         let maximum = 0;
-        let numLayers;
+        let numLayers
+
         let layerNodes = [];
         for (let node of this.nodes) {
             if (!layerNodes[node.layer]) {
@@ -195,7 +223,9 @@ class NeuralNetwork {
             }
             layerNodes[node.layer]++;
         }
+
         layerNodes = Array.from(layerNodes, item => item || 0);
+
         // Nodes can be connected to any layer greater than their own
         for (let i = 0; i < layerNodes.length - 1; i++) {
             for (let j = i + 1; j < layerNodes.length; j++) {
@@ -205,8 +235,9 @@ class NeuralNetwork {
         // console.log(maximum, layerNodes, this.connections.length)
         return maximum <= this.connections.length;
     }
+
     copy() {
-        let nn = new NeuralNetwork(this.numInputs, this.numOutputs, this.inputLabels, this.outputLabels);
+        let nn = new NeuralNetwork(this.numInputs, this.numOutputs, this.inputLabels, this.outputLabels)
         nn.connections = this.connections.slice();
         nn.nodes = this.nodes.slice();
         nn.layers = this.layers;

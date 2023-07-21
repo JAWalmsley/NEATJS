@@ -1,21 +1,23 @@
-"use strict";
 class Connection {
-    fromNode;
-    toNode;
-    weight;
-    constructor(fromNode, toNode, weight) {
+    fromNode: NeuralNode;
+    toNode: NeuralNode;
+    weight: number;
+
+    constructor(fromNode: NeuralNode, toNode: NeuralNode, weight: number) {
         this.fromNode = fromNode;
         this.toNode = toNode;
         this.weight = weight;
     }
+
     getInnovation() {
         // Cantor pairing function
         let k1 = this.fromNode.id;
         let k2 = this.toNode.id;
-        return 0.5 * (k1 + k2) * (k1 + k2 + 1) + k2;
+        return 0.5 * (k1+k2) *(k1+k2+1) + k2
     }
-    setWeight(weight) {
-        if (weight > 1) {
+
+    setWeight(weight: number) {
+        if(weight > 1) {
             weight = 1;
         }
         else if (weight < -1) {
@@ -23,9 +25,11 @@ class Connection {
         }
         this.weight = weight;
     }
+
     copy() {
         return new Connection(this.fromNode, this.toNode, this.weight);
     }
+
     toString() {
         return this.fromNode.id + " -> " + this.toNode.id + " : " + this.weight;
     }
