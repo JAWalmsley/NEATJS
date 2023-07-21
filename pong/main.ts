@@ -9,7 +9,7 @@ namespace Pong {
     let aliveHTML = document.getElementById('alive') as HTMLSpanElement;
     let speciesHTML = document.getElementById('species') as HTMLSpanElement;
 
-    let NEATManager = new NEAT(100, 6, 3, ["BallX", "BallY", "BallVelX", "BallVelY", "PaddleY", "Bias"], ["Up", "Down", "Nothing"]);
+    let NEATManager = new NEAT(500, 6, 3, ["BallX", "BallY", "BallVelX", "BallVelY", "PaddleY", "Bias"], ["Up", "Down", "Nothing"]);
     NEATManager.createPopulation();
 
     let neuralCanv = document.getElementById("neural") as HTMLCanvasElement;
@@ -56,8 +56,24 @@ namespace Pong {
         players = players.filter((p) => !p.paddle.dead)
     }
 
+    function setTimescale(tsc: number) {
+        clearInterval(int);
+        int = setInterval(run, 1000 / tsc);
+    }
+
+    let slowButton = document.getElementById('slowdown') as HTMLButtonElement;
+    let fastButton = document.getElementById('speedup') as HTMLButtonElement;
+
+    slowButton.addEventListener('click', () => {
+        setTimescale(60);
+    });
+
+    fastButton.addEventListener('click', () => {
+        setTimescale(1000);
+    });
+
     reset();
-    setInterval(run, 1000/60);
+    var int = setInterval(run, 1000 / 1000);
 }
 
 

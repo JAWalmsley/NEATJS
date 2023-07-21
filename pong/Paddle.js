@@ -21,6 +21,10 @@ class Paddle {
     draw() {
         let ctx = this.canvas.getContext('2d');
         ctx.fillStyle = 'white';
-        ctx.fillRect(this.x, this.y - this.height / 2, this.width, this.height);
+        ctx.strokeStyle = 'black';
+        ctx.beginPath();
+        ctx.rect(this.x, this.y - this.height / 2, this.width, this.height);
+        ctx.fill();
+        // ctx.stroke();
     }
 }
