@@ -14,7 +14,6 @@ class Paddle {
     }
     update() {
         this.draw();
-        console.log(this.score);
     }
     die() {
         this.dead = true;

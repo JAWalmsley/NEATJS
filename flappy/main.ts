@@ -4,10 +4,7 @@ namespace Flappy {
         'game'
     ) as HTMLCanvasElement;
 
-    let genHTML = document.getElementById('gen') as HTMLSpanElement;
-    let scoreHTML = document.getElementById('score') as HTMLSpanElement;
-    let aliveHTML = document.getElementById('alive') as HTMLSpanElement;
-    let speciesHTML = document.getElementById('species') as HTMLSpanElement;
+   
 
     let birds: Array<Bird> = [];
     let pipes: Array<Pipe> = [];

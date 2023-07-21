@@ -11,7 +11,7 @@ class Ball {
         this.x = this.canvas.width / 2;
         this.y = this.canvas.height / 2 + 0;
         this.velX = 5;
-        this.velY = 0;
+        this.velY = 1;
     }
 
     update(paddle: Paddle) {
@@ -22,7 +22,6 @@ class Ball {
             this.velX *= -1;
             let yDiff = this.y - paddle.y;
             yDiff /= paddle.height / 2;
-            console.log(yDiff)
             this.velY = yDiff*2;
             paddle.score++;
         }
