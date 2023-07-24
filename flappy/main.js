@@ -3,6 +3,10 @@ const PIPE_SPACING = 500;
 var Flappy;
 (function (Flappy) {
     let canvas = document.getElementById('game');
+    let genHTML = document.getElementById('gen');
+    let scoreHTML = document.getElementById('score');
+    let aliveHTML = document.getElementById('alive');
+    let speciesHTML = document.getElementById('species');
     let birds = [];
     let pipes = [];
     let NEATManager = new NEAT(500, 5, 2, ['PipeDist', 'PipeHeight', 'BirdY', 'BirdVel', 'Bias'], ['Jump', 'DontJump']);
